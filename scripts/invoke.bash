@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
+# ! The -d argument must be a Cloudevent which can be easily built here: https://build.cloudevents.gdn/
 curl "http://localhost:9000/2015-03-31/functions/function/invocations" \
 	-H "Content-Type: application/json" \
 	-XPOST \
