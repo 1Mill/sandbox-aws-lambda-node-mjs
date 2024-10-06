@@ -1,0 +1,43 @@
+services:
+  node:
+    image: node:20-alpine
+    volumes:
+      - ./src/:/app
+    working_dir: /app
+
+  lambda:
+    build: ./src
+    depends_on:
+      - mongo
+    environment:
+      MILL_IOTA_AWS_ACCESS_KEY_ID: placeholder
+      MILL_IOTA_AWS_REGION: us-east-1
+      MILL_IOTA_AWS_SECRET_ACCESS_KEY: placeholder
+      MILL_IOTA_MONGO_DB: sandbox-database
+      MILL_IOTA_MONGO_URI: mongodb://mongo:27017/
+      MILL_IOTA_SERVICE_ID: sandbox-lambda
+    ports:
+      - 9000:8080
+
+  mongo:
+    image: bitnami/mongodb:7.0
+    environment:
+      ALLOW_EMPTY_PASSWORD: 'yes'
+      MONGODB_REPLICA_SET_MODE: primary
+    volumes:
+      - mongo-volume:/data/db
+
+  mongo-admin:
+    image: mongo-express:1-20-alpine3.19
+    depends_on:
+      - mongo
+    environment:
+      ME_CONFIG_BASICAUTH_PASSWORD: password
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_MONGODB_URL: mongodb://mongo:27017/?readPreference=primary
+    ports:
+      - 9001:8081
+    restart: always # ! Mongo cold starts prevent connections on first try
+
+volumes:
+  mongo-volume: {}
