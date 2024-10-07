@@ -1,14 +1,25 @@
 # syntax=docker/dockerfile:1
 
-# * https://gallery.ecr.aws/lambda/nodejs
+# https://gallery.ecr.aws/lambda/nodejs
 FROM public.ecr.aws/lambda/nodejs:20
 
 WORKDIR $LAMBDA_TASK_ROOT
 
+# Inject and auto-configure @sentry/serverless
+# https://docs.sentry.io/platforms/node/guides/aws-lambda/container-image/
+COPY --from=public.ecr.aws/sentry/sentry-node-serverless-sdk:28 /opt/ /opt
+
+ENV \
+	NODE_ENV=production \
+	SENTRY_DSN=$SENTRY_DSN \
+	SENTRY_TRACES_SAMPLE_RATE=0.001
+
 COPY package*.json ./
 
+# Workaround to try to COPY files which may or may not exist: https://stackoverflow.com/a/46801962
 RUN [ -f package-lock.json ] && npm clean-install || echo "Skipped: no package-lock.json file found"
 
+# Install global packages
 RUN \
 	npm install --global \
 		@1mill/sops@^0.0.8 \
@@ -17,10 +28,13 @@ RUN \
 		@1mill/sops \
 		@1mill/with-iota
 
+# ! Must come after installing packages for some unknown reason
+ENV NODE_OPTIONS="--require @sentry/serverless/dist/awslambda-auto"
+
 COPY . .
 
-# * Give AWS permission to access directories and run files.
-# * https://repost.aws/knowledge-center/lambda-deployment-package-errors
+# Give AWS permission to access directories and run files.
+# https://repost.aws/knowledge-center/lambda-deployment-package-errors
 RUN \
 	dnf --assumeyes install findutils && \
 	find . -type d -exec chmod 755 {} \; && \
