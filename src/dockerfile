@@ -6,6 +6,7 @@ FROM public.ecr.aws/lambda/nodejs:20
 WORKDIR $LAMBDA_TASK_ROOT
 
 RUN npm install \
+	@1mill/sops@^0.0.8 \
 	@1mill/with-iota@^0.2.1
 
 COPY package*.json ./
