@@ -5,13 +5,18 @@ FROM public.ecr.aws/lambda/nodejs:20
 
 WORKDIR $LAMBDA_TASK_ROOT
 
+RUN npm install \
+	@1mill/with-iota@^0.2.1
+
+COPY package*.json ./
+RUN [ -f package-lock.json ] && npm clean-install || echo "Skipped: no package-lock.json file found"
+
 COPY . .
 
 # * Give AWS permission to access directories and run files.
 # * https://repost.aws/knowledge-center/lambda-deployment-package-errors
 RUN \
 	dnf --assumeyes install findutils && \
-	npm ci && \
 	find . -type d -exec chmod 755 {} \; && \
 	find . -type f -exec chmod 644 {} \; && \
 	dnf --assumeyes remove findutils
