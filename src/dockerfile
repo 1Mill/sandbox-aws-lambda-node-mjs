@@ -5,12 +5,17 @@ FROM public.ecr.aws/lambda/nodejs:20
 
 WORKDIR $LAMBDA_TASK_ROOT
 
-RUN npm install \
-	@1mill/sops@^0.0.8 \
-	@1mill/with-iota@^0.2.1
-
 COPY package*.json ./
+
 RUN [ -f package-lock.json ] && npm clean-install || echo "Skipped: no package-lock.json file found"
+
+RUN \
+	npm install --global \
+		@1mill/sops@^0.0.8 \
+		@1mill/with-iota@^0.2.1 \
+	&& npm link \
+		@1mill/sops \
+		@1mill/with-iota
 
 COPY . .
 
