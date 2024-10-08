@@ -1,4 +1,4 @@
-import { withIota, MutationAction, MutationVersion } from '@1mill/with-iota'
+import { withIota, MutationAction } from '@1mill/with-iota'
 
 const USERS_TABLE = 'users'
 

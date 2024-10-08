@@ -1,5 +1,8 @@
 *
 
+!.dockerignore
+!dockerfile
+
 !index.mjs
 !package-lock.json
 !package.json
