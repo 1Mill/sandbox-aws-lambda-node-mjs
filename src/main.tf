@@ -4,7 +4,7 @@ terraform {
 	required_providers {
 		aws = {
 			source  = "hashicorp/aws"
-			version = "~> 5.46"
+			version = "~> 5.46.0"
 		}
 		docker = {
 			source  = "kreuzwerker/docker"
@@ -39,7 +39,7 @@ provider "docker" {
 
 locals {
 	function_name = "sandbox-lambda"
-	version       = "2024-10-07T21-00-00" # ! To deploy new code, this must be changed.
+	version       = "2024-10-07T21-06-00" # ! To deploy new code, this must be changed.
 }
 
 module "docker_image" {
