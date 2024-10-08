@@ -5,7 +5,7 @@
 1. `docker compose up --build lambda`
 2. `./scripts/invoke.bash`
 3. `docker compose up mongo-admin`
-4. Visit <http://localhost:9001>
+4. Visit <http://localhost:9001/>
 
 ## Deploying to AWS
 
